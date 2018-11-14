@@ -12,9 +12,9 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     onSelect: (item: T, input: HTMLInputElement) => void;
     fetch: (text: string, update: (items: T[]) => void) => void;
     debounceWaitMs?: number;
+    selectOnTab?: boolean;
 }
 export interface AutocompleteResult {
     destroy: () => void;
 }
-declare function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings<T>): AutocompleteResult;
-export default autocomplete;
+export default function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings<T>): AutocompleteResult;

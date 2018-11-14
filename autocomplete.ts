@@ -19,6 +19,7 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     onSelect: (item: T, input: HTMLInputElement) => void;
     fetch: (text: string, update: (items: T[]) => void) => void;
     debounceWaitMs?: number;
+    selectOnTab?: boolean;
 }
 
 export interface AutocompleteResult {
@@ -40,7 +41,8 @@ const enum Keys {
     Tab = 9
 }
 
-function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings<T>): AutocompleteResult {
+// tslint:disable-next-line:no-default-export
+export default function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings<T>): AutocompleteResult {
 
     // just an alias to minimize JS file size
     const doc = document;
@@ -50,6 +52,7 @@ function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings
     const userAgent = navigator.userAgent;
     const mobileFirefox = userAgent.indexOf("Firefox") !== -1 && userAgent.indexOf("Mobile") !== -1;
     const debounceWaitMs = settings.debounceWaitMs || 0;
+    const selectOnTab = settings.selectOnTab || false;
     
     // 'keyup' event will not be fired on Mobile Firefox, so we have to use 'input' event instead
     const keyUpEventName = mobileFirefox ? "input" : "keyup";
@@ -242,12 +245,6 @@ function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings
     function keyup(ev: KeyboardEvent): void {
         const keyCode = ev.which || ev.keyCode || 0;
 
-        // if multiple keys were pressed, before we get update from server,
-        // this may cause redrawing our autocomplete multiple times after the last key press.
-        // to avoid this, the number of times keyboard was pressed will be
-        // saved and checked before redraw our autocomplete box.
-        const savedKeypressCounter = ++keypressCounter;
-
         const ignore = [Keys.Up, Keys.Enter, Keys.Esc, Keys.Right, Keys.Left, Keys.Shift, Keys.Ctrl, Keys.Alt, Keys.CapsLock, Keys.WindowsKey, Keys.Tab];
         for (const key of ignore) {
             if (keyCode === key) {
@@ -259,6 +256,12 @@ function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings
         if (keyCode === Keys.Down && containerDisplayed()) {
             return;
         }
+
+        // if multiple keys were pressed, before we get update from server,
+        // this may cause redrawing our autocomplete multiple times after the last key press.
+        // to avoid this, the number of times keyboard was pressed will be
+        // saved and checked before redraw our autocomplete box.
+        const savedKeypressCounter = ++keypressCounter;
 
         const val = input.value;
 
@@ -377,7 +380,7 @@ function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings
             return;
         }
 
-        if (keyCode === Keys.Enter && selected) {
+        if ((keyCode === Keys.Enter) || (keyCode === Keys.Tab && selectOnTab) && selected) {
             settings.onSelect(selected, input);
             clear();
         }
@@ -424,6 +427,3 @@ function autocomplete<T extends AutocompleteItem>(settings: AutocompleteSettings
         destroy
     };
 }
-
-// tslint:disable-next-line:no-default-export
-export default autocomplete;
