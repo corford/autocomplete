@@ -1,3 +1,4 @@
+[ Note: this is a semi-maintained fork of https://kraaden.github.io/autocomplete/ with `selectOnTab` and `clipHeight` options added ]
 
 Blazing fast and lightweight autocomplete widget without dependencies. Only 1KB gzipped.
 
@@ -110,6 +111,7 @@ You can pass the following options to `autocomplete`:
 |`fetch`|This method will be called to prepare suggestions and then pass them to autocomplete. The first parameter is the text in the input field. The second parameter is a callback function that must be called after suggestions are prepared with an array as parameter.|`-`|
 |`debounceWaitMs`|Enforces that the `fetch` function will only be called once within the specified time frame (in milliseconds) and delays execution. This prevents flooding your server with AJAX requests.|`0`|
 |`selectOnTab`|Pressing the Tab key will trigger the `onSelect` function on the currently highlighted suggestion (this is in addition to the standard behaviour of triggering `onSelect` by pressing Enter or clicking on a suggestion).|`false`|
+|`clipHeight`|If the suggestions do not fit in the viewport, clip the container's height to this many pixels (effectively setting a `maxHeight` property on the container). Note: if the container can fit completely within the viewport, `clipHeight` is ignored.|`none`|
 
 ### Sample config using all options
 

@@ -20,6 +20,7 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     fetch: (text: string, update: (items: T[]) => void) => void;
     debounceWaitMs?: number;
     selectOnTab?: boolean;
+    clipHeight?: number;
 }
 
 export interface AutocompleteResult {
@@ -53,6 +54,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
     const mobileFirefox = userAgent.indexOf("Firefox") !== -1 && userAgent.indexOf("Mobile") !== -1;
     const debounceWaitMs = settings.debounceWaitMs || 0;
     const selectOnTab = settings.selectOnTab || false;
+    const clipHeight = settings.clipHeight || 0;
     
     // 'keyup' event will not be fired on Mobile Firefox, so we have to use 'input' event instead
     const keyUpEventName = mobileFirefox ? "input" : "keyup";
@@ -125,24 +127,36 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
      * Update autocomplete position
      */
     function updatePosition(): void {
+        if (!containerDisplayed()) {
+            return;
+        }
+
+        containerStyle.height = "auto";
+        containerStyle.width = input.offsetWidth + "px";
+
         const docEl = doc.documentElement as HTMLElement;
         const clientTop = docEl.clientTop || doc.body.clientTop || 0;
         const clientLeft = docEl.clientLeft || doc.body.clientLeft || 0;
         const scrollTop = window.pageYOffset || docEl.scrollTop;
         const scrollLeft = window.pageXOffset || docEl.scrollLeft;
 
-        const inputRect = input.getBoundingClientRect();
-        const top = inputRect.top + input.offsetHeight + scrollTop - clientTop;
-        const left = inputRect.left + scrollLeft - clientLeft;
-        
-        containerStyle.top = top + "px";
-        containerStyle.left = left + "px";
-        containerStyle.width = input.offsetWidth + "px";
-        containerStyle.maxHeight = (window.innerHeight - top) + "px";
-        containerStyle.height = "auto";
-    }
+        function calc(): void {
+            const inputRect = input.getBoundingClientRect();
+            const top = inputRect.top + input.offsetHeight + scrollTop - clientTop;
+            const left = inputRect.left + scrollLeft - clientLeft;
+            const height = container.getBoundingClientRect().height;
 
-    updatePosition();
+            containerStyle.top = top + "px";
+            containerStyle.left = left + "px";
+            if ((((scrollTop + window.innerHeight) - (top + height)) < 1) && (clipHeight > 0)) {
+                containerStyle.maxHeight = clipHeight + "px";
+            }
+        }
+
+        // we need to recalculate layout twice, because sometimes it will return an invalid value for `inputRect.left` on the first call
+        calc();
+        calc();
+    }
 
     /**
      * Redraw the autocomplete div element with suggestions

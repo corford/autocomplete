@@ -13,6 +13,7 @@ export interface AutocompleteSettings<T extends AutocompleteItem> {
     fetch: (text: string, update: (items: T[]) => void) => void;
     debounceWaitMs?: number;
     selectOnTab?: boolean;
+    clipHeight?: number;
 }
 export interface AutocompleteResult {
     destroy: () => void;
