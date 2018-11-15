@@ -285,7 +285,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             clearDebounceTimer();
             debounceTimer = window.setTimeout(function(): void {
                 settings.fetch(val, function(elements: T[]): void {
-                    if (keypressCounter === savedKeypressCounter && elements) {
+                    if (keypressCounter === savedKeypressCounter) {
                         items = elements;
                         inputValue = val;
                         selected = items.length > 0 ? items[0] : undefined;
