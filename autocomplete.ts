@@ -149,7 +149,9 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             containerStyle.top = top + "px";
             containerStyle.left = left + "px";
             if ((((scrollTop + window.innerHeight) - (top + height)) < 1) && (clipHeight > 0)) {
-                containerStyle.maxHeight = clipHeight + "px";
+              // clip container to height needed to keep it in viewport (but make sure clipped height is no less than `clipHeight`)
+              const difference = (top + height) - (scrollTop + window.innerHeight);
+              containerStyle.maxHeight = ((height - difference) > clipHeight) ? height - difference + "px" : clipHeight + 'px';
             }
         }
 
