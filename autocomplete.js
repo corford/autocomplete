@@ -216,7 +216,7 @@
                 clearDebounceTimer();
                 debounceTimer = window.setTimeout(function () {
                     settings.fetch(val, function (elements) {
-                        if (keypressCounter === savedKeypressCounter && elements) {
+                        if (keypressCounter === savedKeypressCounter) {
                             items = elements;
                             inputValue = val;
                             selected = items.length > 0 ? items[0] : undefined;
