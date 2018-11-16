@@ -216,10 +216,10 @@
                 clearDebounceTimer();
                 debounceTimer = window.setTimeout(function () {
                     settings.fetch(val, function (elements) {
-                        if (keypressCounter === savedKeypressCounter) {
+                        if ((keypressCounter === savedKeypressCounter) && elements.length) {
                             items = elements;
                             inputValue = val;
-                            selected = items.length > 0 ? items[0] : undefined;
+                            selected = items[0];
                             update();
                         }
                     });
@@ -317,7 +317,7 @@
                 }
                 return;
             }
-            if ((keyCode === 13 /* Enter */) || (keyCode === 9 /* Tab */ && selectOnTab) && selected) {
+            if (((keyCode === 13 /* Enter */) || (keyCode === 9 /* Tab */ && selectOnTab)) && selected) {
                 settings.onSelect(selected, input);
                 clear();
             }
