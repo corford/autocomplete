@@ -285,7 +285,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             clearDebounceTimer();
             debounceTimer = window.setTimeout(function(): void {
                 settings.fetch(val, function(elements: T[]): void {
-                    if (keypressCounter === savedKeypressCounter) {
+                    if ((keypressCounter === savedKeypressCounter) && elements.length) {
                         items = elements;
                         inputValue = val;
                         selected = items.length > 0 ? items[0] : undefined;
@@ -396,7 +396,7 @@ export default function autocomplete<T extends AutocompleteItem>(settings: Autoc
             return;
         }
 
-        if ((keyCode === Keys.Enter) || (keyCode === Keys.Tab && selectOnTab) && selected) {
+        if (((keyCode === Keys.Enter) || (keyCode === Keys.Tab && selectOnTab)) && selected) {
             settings.onSelect(selected, input);
             clear();
         }
