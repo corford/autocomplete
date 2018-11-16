@@ -1,4 +1,4 @@
-This is a semi-maintained fork of https://github.com/kraaden/autocomplete with `selectOnTab` and `clipHeight` options added.
+This is a fork of https://github.com/kraaden/autocomplete with `selectOnTab` and `clipHeight` options added. Effort is made to shadow upstream changes and improvements so that this fork can be used as a simple drop-in replacement.
 
 ## Additional Options
 
